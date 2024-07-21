@@ -120,8 +120,8 @@ socket.on('inCheck', function(player){
     console.log('player', player);
 })
 
-socket.on('gameOver', function(loser){
-    gameOverSound.play().then(r => 'gameOver');
+socket.on('gameOver', async function(loser){
+    await gameOverSound.play();
     console.log(`${loser} has lost the match!`);
 })
 
@@ -129,8 +129,8 @@ socket.on('draw', function(drawType){
     console.log(drawType);
 });
 
-socket.on('capture', function(move, movedPlayer, currentPlayer){
-    captureSound.play().then(r=>'captured!');
+socket.on('capture', async function(move, movedPlayer, currentPlayer){
+    await captureSound.play();
 });
 
 renderBoard();

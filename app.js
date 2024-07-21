@@ -89,6 +89,6 @@ io.on('connection', function (socket) {
     });
 });
 
-server.listen(3000, function(){
+server.listen(3000,'192.168.1.5'||'localhost', function(){
     console.log('Server started on http://localhost:3000');
 });
