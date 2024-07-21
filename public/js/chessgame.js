@@ -6,6 +6,10 @@ let draggedPiece = null;
 let sourceSquare = null;
 let playerRole = null;
 
+const moveSound = new Audio('audio/move.mp3');
+const captureSound = new Audio('audio/capture.mp3');
+const gameOverSound = new Audio('audio/game_over.webm');
+
 function renderBoard(){
     const board = chess.board();
     boardElement.innerHTML = '';
@@ -52,7 +56,7 @@ function renderBoard(){
                         col: parseInt(squareElement.dataset.col),
                     }
 
-                    handleMove(sourceSquare, targetSource);
+                    handleMove(sourceSquare, targetSource, square);
                 }
             });
 
@@ -67,11 +71,12 @@ function renderBoard(){
     }
 }
 
-function handleMove(source, target){
+function handleMove(source, target, square){
     const move = {
         from: `${String.fromCharCode(97 + source.col)}${8 - source.row}`,
         to: `${String.fromCharCode(97+target.col)}${8 - target.row}`,
-        promotion: 'q'
+        promotion: 'q',
+        square: square
     };
 
     socket.emit('move', move);
@@ -106,8 +111,26 @@ socket.on('boardState', function(fen){
 });
 
 socket.on('move', function(move){
+    if (!move.square) moveSound.play().then(r => 'moved!');
     chess.move(move);
     renderBoard();
+});
+
+socket.on('inCheck', function(player){
+    console.log('player', player);
+})
+
+socket.on('gameOver', function(loser){
+    gameOverSound.play().then(r => 'gameOver');
+    console.log(`${loser} has lost the match!`);
+})
+
+socket.on('draw', function(drawType){
+    console.log(drawType);
+});
+
+socket.on('capture', function(move, movedPlayer, currentPlayer){
+    captureSound.play().then(r=>'captured!');
 });
 
 renderBoard();
