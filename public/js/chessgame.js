@@ -27,6 +27,11 @@ function renderBoard(){
                 pieceElement.innerText = getPieceUnicode(square);
                 pieceElement.draggable = playerRole === square.color;
 
+                pieceElement.addEventListener('click',  function (event) {
+                    
+
+                })
+
                 pieceElement.addEventListener('dragstart', function (e) {
                     if (pieceElement.draggable){
                         draggedPiece = pieceElement;
@@ -116,18 +121,11 @@ socket.on('move', function(move){
     renderBoard();
 });
 
-socket.on('inCheck', function(player){
-    console.log('player', player);
-})
-
 socket.on('gameOver', async function(loser){
     await gameOverSound.play();
     console.log(`${loser} has lost the match!`);
 })
 
-socket.on('draw', function(drawType){
-    console.log(drawType);
-});
 
 socket.on('capture', async function(move, movedPlayer, currentPlayer){
     await captureSound.play();
