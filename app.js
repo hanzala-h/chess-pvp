@@ -1,7 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socket = require('socket.io');
-const { Chess, WHITE, BLACK } = require('chess.js');
+const {Chess, WHITE, BLACK} = require('chess.js');
 const path = require('path');
 
 const app = express();
@@ -19,19 +19,19 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function (req, res) {
-    res.render('index');
+    res.render('index', {title: 'Chess.com'});
 });
 
 io.on('connection', function (socket) {
     console.log('Client connected');
 
-    if (!players.white) {
+    if(!players.white){
         players.white = socket.id;
         socket.emit('playerRole', 'w');
-    } else if (!players.black) {
+    } else if (!players.black){
         players.black = socket.id;
         socket.emit('playerRole', 'b');
-    } else {
+    } else{
         socket.emit('spectatorRole');
     }
 
@@ -43,8 +43,8 @@ io.on('connection', function (socket) {
         }
     });
 
-    socket.on('move', function (move) {
-        try {
+    socket.on('move', function (move){
+        try{
             if (chess.turn() === 'w' && socket.id !== players.white) return;
             if (chess.turn() === 'b' && socket.id !== players.black) return;
             if (!(players.white && players.black)) return;
@@ -57,26 +57,38 @@ io.on('connection', function (socket) {
                 io.emit('move', move);
                 io.emit('boardState', chess.fen());
 
-                if (chess.isGameOver()) {
+                if (chess.inCheck()){
+                    io.emit('inCheck', currentPlayer);
+                }
+                if (chess.isCheckmate()){
                     io.emit('gameOver', currentPlayer);
                 }
+                if (chess.isStalemate()){
+                    io.emit('draw', 'stalemate');
+                }
+                if (chess.isThreefoldRepetition()){
+                    io.emit('draw', 'threefold');
+                }
+                if (chess.isInsufficientMaterial()){
+                    io.emit('draw', 'insufficientMaterial');
+                }
 
-                if (move.square && move.square.color !== movedPlayer) {
+                if (move.square && move.square.color !== movedPlayer){
                     io.emit('capture', move, movedPlayer, currentPlayer)
                 }
 
-            } else {
+            } else{
                 console.log(`Invalid Move: ${move}`);
                 socket.emit('invalidMove', move);
             }
         }
-        catch (e) {
+        catch(e){
             console.log(e);
             socket.emit('invalidMove', move);
         }
     });
 });
 
-server.listen(3000, 'localhost', function () {
+server.listen(3000,'192.168.1.5'||'localhost', function(){
     console.log('Server started on http://localhost:3000');
 });
