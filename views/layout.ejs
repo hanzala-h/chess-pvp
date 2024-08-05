@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= title %>Chess</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="w-full h-full bg-gray-50">
+    <div class="px-8 bg-white border-b w-screen h-16 flex items-center justify-between shadow-sm">
+        <a href="/" class="text-2xl font-bold">Chess</a>
+        <div>
+            <% if (user) { %>
+
+            <% } else { %>
+            <a href="/login" class="px-3 hover:underline">Login</a>
+            <a href="/signup" class="px-3 hover:underline">Signup</a>
+            <% } %>
+        </div>
+    </div>
+    <div class="flex items-center justify-center">
+        <%- include(content) %>
+    </div>
+    <div class="text-center">
+        &copy; <%= new Date().getFullYear() %> Chess
+    </div>
+</body>
+</html>
